@@ -103,3 +103,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# CELERY SETTINGS
+CELERY_BROKER_URL = 'redis://{}:{}/{}'.format(environ.get('REDIS_HOST'), environ.get('REDIS_PORT'), environ.get('REDIS_DB'))  # Using Redis as a message broker
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
