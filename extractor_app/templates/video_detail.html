@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Detail</title>
+</head>
+<body>
+    <h1>{{ video.file.name }}</h1>
+
+    <!-- Video player with closed captions -->
+    <video width="600" controls>
+        <source src="{{ video.file.url }}" type="video/mp4">
+        {% for subtitle in subtitles %}
+        <track label="{{ subtitle.language }}" kind="subtitles" srclang="{{ subtitle.language }}"
+               src="{% url 'subtitle_file' subtitle.id %}" default>
+        {% endfor %}
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Search form -->
+    <h3>Search Subtitles</h3>
+    <form method="get" action="{% url 'search_subtitle' video.id %}">
+        <input type="text" name="q" placeholder="Search subtitles" value="{{ query }}">
+        <button type="submit">Search</button>
+    </form>
+
+    <!-- Display search results if a query was made -->
+    {% if query %}
+        <h4>Search results for "{{ query }}":</h4>
+        <ul>
+            {% for subtitle in subtitles %}
+            <li>
+                <a href="{% url 'video_detail' video.id %}?time={{ subtitle.start_time }}">
+                    {{ subtitle.start_time }} - {{ subtitle.content }}
+                </a>
+            </li>
+            {% empty %}
+            <li>No matching subtitles found.</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</body>
+</html>

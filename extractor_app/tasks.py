@@ -9,6 +9,9 @@ from django.db import IntegrityError, DatabaseError
 
 @shared_task
 def extract_subtitles(video_id):
+    """
+    extract subtitles from video
+    """
     try:
         video = Video.objects.get(id=video_id)
         video_path = video.file.path
