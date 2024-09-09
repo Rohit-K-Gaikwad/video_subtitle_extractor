@@ -29,3 +29,29 @@ def video_list(request):
     videos = Video.objects.all()
     return render(request, 'video_list.html', {'videos': videos})
 
+
+def video_detail(request, video_id):
+    try:
+        video = get_object_or_404(Video, id=video_id)
+        subtitles = Subtitle.objects.filter(video=video)
+        return render(request, 'video_detail.html', {'video': video, 'subtitles': subtitles})
+    except Video.DoesNotExist:
+        return HttpResponse("Video not found", status=404)
+    except DatabaseError as e:
+        return HttpResponse(f"Database error: {str(e)}", status=500)
+
+
+def search_subtitle(request, video_id):
+    try:
+        video = get_object_or_404(Video, id=video_id)
+        query = request.GET.get('q', '')
+        if query:
+            subtitles = Subtitle.objects.filter(video=video, content__icontains=query)
+            return render(request, 'video_detail.html', {'video': video, 'subtitles': subtitles, 'query': query})
+        else:
+            return redirect('video_detail', video_id=video_id)
+    except Subtitle.DoesNotExist:
+        return HttpResponse("Subtitles not found", status=404)
+    except Exception as e:
+        return HttpResponse(f"An error occurred: {str(e)}", status=500)
+
